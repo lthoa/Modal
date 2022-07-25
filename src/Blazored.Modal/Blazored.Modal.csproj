@@ -28,6 +28,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\BlazoredModal.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="6.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
@@ -35,6 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />    
   </ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="IF $(ConfigurationName) == Debug (debug.cmd)" />
+		<Exec Command="IF $(ConfigurationName) == Release (release.cmd)" />
+	</Target>
 </Project>
