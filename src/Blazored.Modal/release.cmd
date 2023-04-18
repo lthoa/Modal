@@ -1,0 +1,1 @@
+XCOPY "bin\Release\net6.0\Blazored.Modal.dll" "..\..\..\..\oqtane.framework\Oqtane.Server\bin\Release\net6.0\" /Y

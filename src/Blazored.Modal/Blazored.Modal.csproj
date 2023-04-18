@@ -38,12 +38,13 @@
     <PackageReference Include="Microsoft.JSInterop.WebAssembly" Version="6.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="icon.png" Pack="true" PackagePath="\" />    
-  </ItemGroup>
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="IF $(ConfigurationName) == Debug (debug.cmd)" />
 		<Exec Command="IF $(ConfigurationName) == Release (release.cmd)" />
 	</Target>
+	
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\" />    
+  </ItemGroup>
+	
 </Project>
