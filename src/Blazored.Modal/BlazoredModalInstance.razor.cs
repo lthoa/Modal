@@ -24,6 +24,7 @@ public partial class BlazoredModalInstance : IDisposable
     private ModalAnimationType? AnimationType { get; set; }
     private bool ActivateFocusTrap { get; set; }
     public bool UseCustomLayout { get; set; }
+    public bool UseDefaultLayout { get; set; }
     public FocusTrap? FocusTrap { get; set; }
 
 
@@ -31,6 +32,7 @@ public partial class BlazoredModalInstance : IDisposable
     private ElementReference _modalReference;
     private bool _setFocus;
     private bool _disableNextRender;
+    private string ModalWidth;
 
     // Temporarily add a tabindex of -1 to the close button so it doesn't get selected as the first element by activateFocusTrap
     private readonly Dictionary<string, object> _closeBtnAttributes = new() { { "tabindex", "-1" } };
@@ -100,6 +102,11 @@ public partial class BlazoredModalInstance : IDisposable
             
             await Task.Delay(400); // Needs to be a bit more than the animation time because of delays in the animation being applied between server and client (at least when using blazor server side), I think.
         }
+        else if (AnimationType is ModalAnimationType.Fade)
+        {
+            OverlayAnimationClass += " fade";
+            StateHasChanged();
+        }
 
         await Parent.DismissInstance(Id, modalResult);
     }
@@ -129,6 +136,34 @@ public partial class BlazoredModalInstance : IDisposable
         ActivateFocusTrap = SetActivateFocusTrap();
         OverlayAnimationClass = SetAnimationClass();
         Parent.OnModalClosed += AttemptFocus;
+
+        UseDefaultLayout = SetUseDefaultLayout();
+        ModalWidth = SetModalWidth();
+    }
+
+    private bool SetUseDefaultLayout()
+    {
+        if (Options.UseDefaultLayout.HasValue)
+        {
+            return Options.UseDefaultLayout.Value;
+        }
+
+        if (GlobalModalOptions.UseDefaultLayout.HasValue)
+        {
+            return GlobalModalOptions.UseDefaultLayout.Value;
+        }
+
+        return false;
+    }
+
+    private string SetModalWidth()
+    {
+        if (Options.Width > 0)
+        {
+            return "mw-" + Options.Width + "px";
+        }
+
+        return "mw-500px";
     }
 
     private void AttemptFocus() 
@@ -248,6 +283,11 @@ public partial class BlazoredModalInstance : IDisposable
 
     private string SetModalClass()
     {
+        if (string.IsNullOrEmpty(ModalClass) && !UseDefaultLayout && !UseCustomLayout)
+        {
+            return "";
+        }
+
         var modalClass = string.Empty;
 
         if (!string.IsNullOrWhiteSpace(Options.Class))
@@ -269,7 +309,7 @@ public partial class BlazoredModalInstance : IDisposable
         => Options.AnimationType ?? GlobalModalOptions.AnimationType ?? ModalAnimationType.FadeInOut;
 
     private string SetAnimationClass() 
-        => AnimationType is ModalAnimationType.FadeInOut ? "fade-in" : string.Empty;
+        => AnimationType is ModalAnimationType.FadeInOut ? "fade-in" : AnimationType is ModalAnimationType.Fade ? "fade" : string.Empty;
 
     private bool SetHideHeader()
     {

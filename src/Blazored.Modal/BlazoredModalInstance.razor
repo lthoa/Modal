@@ -4,7 +4,7 @@
         @Content
     </CascadingValue>
 }
-else
+else if (UseDefaultLayout)
 {
     <div class="bm-container @Position @OverlayCustomClass @OverlayAnimationClass"
          @ref="_modalReference" 
@@ -33,4 +33,34 @@ else
         </FocusTrap>
         
     </div>
+}
+else
+{
+    <!--begin::Modal - Create App-->
+    <div class="modal show @Position @OverlayCustomClass @OverlayAnimationClass"
+     @ref="_modalReference"
+     @onclick="HandleBackgroundClick" style="display:block!important">
+        <FocusTrap @ref="FocusTrap" IsActive="ActivateFocusTrap">
+            <div class="modal-dialog modal-dialog-centered @ModalWidth @ModalClass" role="dialog" aria-modal="true" @onclick:stopPropagation="true">
+                <div class="modal-content">
+                    @if (!HideHeader)
+                    {
+                        <div class="modal-header">
+                            <h2>@Title</h2>
+                            @if (!HideCloseButton)
+                            {
+                                <div class="btn btn-icon btn-sm btn-active-icon-primary" @onclick="() => CancelAsync()" @attributes="@_closeBtnAttributes">
+                                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                                </div>
+                            }
+                        </div>
+                    }
+                    <CascadingValue Value="this">
+                        @Content
+                    </CascadingValue>
+                </div>
+            </div>
+        </FocusTrap>
+    </div>
+    <div class="modal-backdrop fade show"></div>
 }
